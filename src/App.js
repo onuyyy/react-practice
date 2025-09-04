@@ -1,9 +1,19 @@
 import { Component } from "react";
 import ExpenseForm from "./components/ExpenseForm";
 import "./App.css";
+import ExpenseList from "./components/ExpenseList";
 
 
 class App extends Component {
+
+  // 가짜 데이터 만들기
+  // ExpenseList -> ExepnseItem으로 데이터를 전송해야 한다 
+  initialExpenses = [
+    { id: 1, charge: "렌트비", amount: 3000 },
+    { id: 2, charge: "교통비", amount: 2000 },
+    { id: 3, charge: "식비", amount: 1000 }
+  ]
+
   render() {
     return (
       <main className="main-container">
@@ -14,7 +24,7 @@ class App extends Component {
         </div>
 
         <div style={{width:'100%', backgroundColor: 'white', padding: '1rem'}}>
-          {/*Expense List*/}
+          <ExpenseList initialExpenses={this.initialExpenses} />
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '1rem'}}>
