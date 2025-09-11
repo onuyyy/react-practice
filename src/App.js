@@ -6,6 +6,18 @@ import ExpenseList from "./components/ExpenseList";
 
 class App extends Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      expenses : [
+        { id: 1, charge: "렌트비", amount: 3000 },
+        { id: 2, charge: "교통비", amount: 2000 },
+        { id: 3, charge: "식비", amount: 1000 },
+        { id: 4, charge: "소모품비", amount: 7000 }
+      ]
+    }
+  }
+
   // 가짜 데이터 만들기
   // ExpenseList -> ExepnseItem으로 데이터를 전송해야 한다 
   initialExpenses = [
@@ -13,6 +25,13 @@ class App extends Component {
     { id: 2, charge: "교통비", amount: 2000 },
     { id: 3, charge: "식비", amount: 1000 }
   ]
+
+handleDelete = (id) => {
+  // const newExpenses = this.initialExpenses.filter(expense => expense.id != id)
+  const newExpenses = this.state.expenses.filter(expense => expense.id != id)
+  this.setState({ expenses: newExpenses })
+  console.log(newExpenses)
+}
 
   render() {
     return (
@@ -24,7 +43,11 @@ class App extends Component {
         </div>
 
         <div style={{width:'100%', backgroundColor: 'white', padding: '1rem'}}>
-          <ExpenseList initialExpenses={this.initialExpenses} />
+          <ExpenseList 
+            //initialExpenses={this.initialExpenses} 
+            initialExpenses={this.state.expenses}
+            handleDelete={this.handleDelete}
+          />
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '1rem'}}>

@@ -10,7 +10,11 @@ export class ExpenseList extends Component {
         <ul className='list'>
           {this.props.initialExpenses.map(expense => {
             return (
-              <ExpenseItem expense={expense}/>
+              <ExpenseItem 
+                expense={expense} 
+                key={expense.id}
+                handleDelete={this.props.handleDelete}
+              />
             )
           })}
         </ul>
