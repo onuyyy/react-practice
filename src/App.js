@@ -1,12 +1,14 @@
 import { useState } from "react";
-import ExpenseForm from "./components/ExpenseForm";
 import "./App.css";
+import ExpenseForm from "./components/ExpenseForm";
 import ExpenseList from "./components/ExpenseList";
+import Alert from './components/Alert'
 
 const App = () => {
 
   const [charge, setCharge] = useState("");
   const [amount, setAmount] = useState(0);
+  const [alert, setAlert] = useState({show: false});
 
   const [expenses, setExpenses] = useState([
     { id: 1, charge: "렌트비", amount: 3000 },
@@ -31,6 +33,13 @@ const App = () => {
     setAmount(e.target.valueAsNumber) // e.target.value는 string이라 검사 위하여
   }
 
+  const handleAlert = ({type, text}) => {
+    setAlert({show: true, type: type, text: text})
+    setTimeout(() => {
+      setAlert({ show: false});
+    }, 7000); 
+  }
+
   const handleDelete = (id) => {
     // const newExpenses = this.initialExpenses.filter(expense => expense.id != id)
     const newExpenses = expenses.filter(
@@ -38,7 +47,7 @@ const App = () => {
     );
 
     setExpenses(newExpenses);
-    console.log(newExpenses);
+    handleAlert({ type: 'danger', text: '아이템이 삭제되었습니다.'})
   };
 
   const handleSubmit = (e) => {
@@ -51,14 +60,20 @@ const App = () => {
       const newExpenses = [...expenses, newExpense]
       setExpenses(newExpenses)
       setCharge("");
-      setAmount(0)
+      setAmount(0);
+      handleAlert({type: 'success', text: '아이템이 생성되었습니다.'})
     } else {
       console.log('error');
+      handleAlert({
+        type: 'danger',
+        text: 'charge는 빈 값일 수 없으며 amount는 0보다 커야 합니다.'
+      })
     }
   }
 
   return (
     <main className="main-container">
+      {alert.show ? <Alert type={alert.type} text={alert.text} /> : null}
       <h1>예산 계산기</h1>
 
       <div style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}>
@@ -83,7 +98,11 @@ const App = () => {
       >
         <p style={{ fontSize: "2rem" }}>
           총 지출:
-          <span>원</span>
+          <span>
+            {expenses.reduce((acc, curr) => {
+              return (acc += curr.amount);
+            }, 0)}
+            원</span>
         </p>
       </div>
     </main>
