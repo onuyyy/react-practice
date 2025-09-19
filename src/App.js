@@ -8,7 +8,9 @@ const App = () => {
 
   const [charge, setCharge] = useState("");
   const [amount, setAmount] = useState(0);
-  const [alert, setAlert] = useState({show: false});
+  const [alert, setAlert] = useState({ show: false });
+  const [id, setId] = useState('');
+  const [edit, setEdit] = useState(false);
 
   const [expenses, setExpenses] = useState([
     { id: 1, charge: "렌트비", amount: 3000 },
@@ -34,7 +36,7 @@ const App = () => {
   }
 
   const handleAlert = ({type, text}) => {
-    setAlert({show: true, type: type, text: text})
+    setAlert({ show: true, type: type, text: text })
     setTimeout(() => {
       setAlert({ show: false});
     }, 7000); 
@@ -54,14 +56,25 @@ const App = () => {
     e.preventDefault()
 
     if (charge !== "" && amount > 0) {
-      const newExpense = {id: crypto.randomUUID(), charge, amount}
+      if (edit) {
+        const newExpenses = expenses.map(i => {
+          return i.id === id ? { ...i, charge, amount } : i;
+        });
 
-      // 불변성을 지켜주기 위한 새로운 expenses를 생성
-      const newExpenses = [...expenses, newExpense]
-      setExpenses(newExpenses)
-      setCharge("");
-      setAmount(0);
-      handleAlert({type: 'success', text: '아이템이 생성되었습니다.'})
+        setExpenses(newExpenses)
+        setEdit(false)
+        handleAlert({ type: 'success', text: "아이템이 수정되었습니다." })
+      } else {
+        const newExpense = {id: crypto.randomUUID(), charge, amount}
+
+        // 불변성을 지켜주기 위한 새로운 expenses를 생성
+        const newExpenses = [...expenses, newExpense]
+        setExpenses(newExpenses)
+        handleAlert({type: 'success', text: '아이템이 생성되었습니다.'})
+      }
+
+        setCharge("");
+        setAmount(0);
     } else {
       console.log('error');
       handleAlert({
@@ -69,6 +82,19 @@ const App = () => {
         text: 'charge는 빈 값일 수 없으며 amount는 0보다 커야 합니다.'
       })
     }
+  }
+
+  const handleEdit = id => {
+    const expense = expenses.find(i => i.id === id);
+    const { charge, amount } = expense;
+    setId(id);
+    setCharge(charge);
+    setAmount(amount);
+    setEdit(true);
+  }
+
+  const clearItems = () => {
+    setExpenses([]);
   }
 
   return (
@@ -82,14 +108,17 @@ const App = () => {
         charge={charge} 
         handleAmount={handleAmount}
         handleSubmit={handleSubmit}
-        amount={amount} />
+        amount={amount}
+        edit={edit} />
       </div>
 
       <div style={{ width: "100%", backgroundColor: "white", padding: "1rem" }}>
         <ExpenseList
           //initialExpenses={this.initialExpenses}
-          initialExpenses={expenses}
+          expenses={expenses}
           handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          clearItems={clearItems}
         />
       </div>
 
